@@ -1,16 +1,16 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>晨熙魔法</title>
-        <link>http://blog.liuyou.space/</link>
+        <link>http://g.magic.ac.cn/</link>
         <description>晨熙的网站</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 25 Jan 2021 17:22:44 &#43;0800</lastBuildDate>
-            <atom:link href="http://blog.liuyou.space/index.xml" rel="self" type="application/rss+xml" />
+            <atom:link href="http://g.magic.ac.cn/index.xml" rel="self" type="application/rss+xml" />
         <item>
     <title>Bring my own candy</title>
-    <link>http://blog.liuyou.space/first/</link>
+    <link>http://g.magic.ac.cn/first/</link>
     <pubDate>Mon, 25 Jan 2021 17:22:44 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://blog.liuyou.space/first/</guid>
+    <guid>http://g.magic.ac.cn/first/</guid>
     <description><![CDATA[时隔5年再次捡起自己的网站，但还是希望自己能挤出时间锻炼一下书写博客，文档的能力。]]></description>
 </item></channel>
 </rss>
