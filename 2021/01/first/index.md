@@ -1,4 +1,4 @@
-# Bring my own candy
+# Bring My Own Candy
 
 
 时隔5年再次捡起自己的网站，但还是希望自己能挤出时间锻炼一下书写博客，文档的能力。
