@@ -1,0 +1,485 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>Postgres 高可用部署验证 - 晨熙小屋</title><meta name=Description content="晨熙的魔法小屋"><meta property="og:title" content="Postgres 高可用部署验证">
+<meta property="og:description" content="构架图 参考官方截图 部署步骤 废话就懒得说了直接上命令 2. 准备工作 1 2 #### 1. 内部互通网络 docker network create --driver bridge mynet --subnet 172.20.0.0/24 --gateway 172.20.0.1 2. 第一步创建 monitor 1 2 3 4 5 6 docker run --net mynet -it -d --name">
+<meta property="og:type" content="article">
+<meta property="og:url" content="/2022/08/20220805-hapg/"><meta property="og:image" content="/images/logo.svg"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-08-05T10:46:45+00:00">
+<meta property="article:modified_time" content="2022-08-05T10:46:45+00:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="/images/logo.svg">
+<meta name=twitter:title content="Postgres 高可用部署验证">
+<meta name=twitter:description content="构架图 参考官方截图 部署步骤 废话就懒得说了直接上命令 2. 准备工作 1 2 #### 1. 内部互通网络 docker network create --driver bridge mynet --subnet 172.20.0.0/24 --gateway 172.20.0.1 2. 第一步创建 monitor 1 2 3 4 5 6 docker run --net mynet -it -d --name">
+<meta name=application-name content="LoveIt">
+<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/images/logo.svg><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=/2022/08/20220805-hapg/><link rel=prev href=/2022/07/20220727-soulseek/><link rel=stylesheet href=/lib/normalize/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Postgres 高可用部署验证","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"\/2022\/08\/20220805-hapg\/"},"genre":"posts","keywords":"docker, postgres","wordcount":1200,"url":"\/2022\/08\/20220805-hapg\/","datePublished":"2022-08-05T10:46:45+00:00","dateModified":"2022-08-05T10:46:45+00:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"优仔"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=晨熙小屋><img class="lazyload logo" src=/svg/loading.min.svg data-src=/images/logo.svg data-srcset="/images/logo.svg, /images/logo.svg 1.5x, /images/logo.svg 2x" data-sizes=auto alt=/images/logo.svg title=/images/logo.svg></a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章 </a><a class=menu-item href=/diabetes/> 糖系列 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/about> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-desktop>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=晨熙小屋><img class="lazyload logo" src=/svg/loading.min.svg data-src=/images/logo.svg data-srcset="/images/logo.svg, /images/logo.svg 1.5x, /images/logo.svg 2x" data-sizes=auto alt=/images/logo.svg title=/images/logo.svg></a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><div class=search-wrapper>
+<div class="search mobile" id=search-mobile>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-mobile>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</div>
+<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
+取消
+</a>
+</div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/diabetes/ title>糖系列</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/about title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">Postgres 高可用部署验证</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>优仔</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E4%BB%A3%E7%A0%81/><i class="far fa-folder fa-fw"></i>代码</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2022-08-05>2022-08-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1200 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+</div><div class="details toc" id=toc-static kept=true>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#构架图>构架图</a></li>
+<li><a href=#部署步骤>部署步骤</a>
+<ul>
+<li><a href=#2-准备工作>2. 准备工作</a></li>
+<li><a href=#2-第一步创建-monitor>2. 第一步创建 monitor</a></li>
+</ul>
+</li>
+<li><a href=#2-第二步创建-主节点>2. 第二步创建 主节点</a></li>
+<li><a href=#第二步创建-创建从节点>第二步创建 创建从节点</a></li>
+<li><a href=#检查最终状态>检查最终状态</a></li>
+<li><a href=#检查主备功能>检查主备功能</a></li>
+<li><a href=#补充>补充</a></li>
+<li><a href=#参考资料>参考资料</a></li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h2 id=构架图>构架图</h2>
+<p>参考官方截图</p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=/images/arch-single-standby.svg data-srcset="/images/arch-single-standby.svg, /images/arch-single-standby.svg 1.5x, /images/arch-single-standby.svg 2x" data-sizes=auto alt=/images/arch-single-standby.svg title=/images/arch-single-standby.svg></p>
+<h2 id=部署步骤>部署步骤</h2>
+<p>废话就懒得说了直接上命令</p>
+<h3 id=2-准备工作>2. 准备工作</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1>#### 1. 内部互通网络</span>
+docker network create --driver bridge mynet  --subnet 172.20.0.0/24 --gateway 172.20.0.1
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=2-第一步创建-monitor>2. 第一步创建 monitor</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>docker run --net mynet -it -d --name pgmonitor-service <span class=se>\
+</span><span class=se></span>  --ip 172.20.0.20 <span class=se>\
+</span><span class=se></span>  -v /data/pgmonitor:/data/pgaf <span class=se>\
+</span><span class=se></span>  -e <span class=s2>&#34;PG_AUTOCTL_DEBUG=1&#34;</span> <span class=se>\
+</span><span class=se></span>  -e <span class=s2>&#34;PGDATA=/data/pgaf&#34;</span> <span class=se>\
+</span><span class=se></span>  hapg:14 pg_autoctl create monitor --no-ssl --auth trust --run
+</code></pre></td></tr></table>
+</div>
+</div><p>运行完以后可以<code>docker exec pgmonitor-service pg_autoctl show state</code>命令查看是否已经启动完成</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>Name <span class=p>|</span>  Node <span class=p>|</span>  Host:Port <span class=p>|</span>  TLI: LSN <span class=p>|</span>   Connection <span class=p>|</span>      Reported State <span class=p>|</span>      Assigned State
+-----+-------+------------+-----------+--------------+---------------------+--------------------
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=2-第二步创建-主节点>2. 第二步创建 主节点</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>docker run --net mynet -it -d --name pg1-service <span class=se>\
+</span><span class=se></span>  --ip 172.20.0.30 <span class=se>\
+</span><span class=se></span>  -v /data/pg1:/data <span class=se>\
+</span><span class=se></span>  -e <span class=s2>&#34;PG_AUTOCTL_DEBUG=1&#34;</span> <span class=se>\
+</span><span class=se></span>  -e <span class=s2>&#34;PGDATA=/data/pgaf&#34;</span> <span class=se>\
+</span><span class=se></span>  hapg:14 pg_autoctl create postgres --no-ssl --auth scram-sha-256 <span class=se>\
+</span><span class=se></span>  --hostname pg1-service --pg-hba-lan --username zuser --dbname zdb <span class=se>\
+</span><span class=se></span>  --monitor <span class=s2>&#34;postgresql://autoctl_node@pgmonitor-service/pg_auto_failover&#34;</span> --run
+</code></pre></td></tr></table>
+</div>
+</div><p>等待完成（可以继续使用上述<code>docker exec pgmonitor-service pg_autoctl show state</code>查看状态命令），完成大概如下</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>  Name <span class=p>|</span>  Node <span class=p>|</span>        Host:Port <span class=p>|</span>       TLI: LSN <span class=p>|</span>   Connection <span class=p>|</span>      Reported State <span class=p>|</span>      Assigned State
+-------+-------+------------------+----------------+--------------+---------------------+--------------------
+node_1 <span class=p>|</span>     <span class=m>1</span> <span class=p>|</span> pg1-service:5432 <span class=p>|</span>   1: 0/17598E0 <span class=p>|</span>   read-write <span class=p>|</span>              single <span class=p>|</span>              single
+</code></pre></td></tr></table>
+</div>
+</div><p>然后配置一下主从节点件通信密码</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>docker <span class=nb>exec</span> pg1-service pg_autoctl config <span class=nb>set</span> replication.password h4ckm3m0r3
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><strong>注意这里有个坑</strong>，上面的官方文档命令完成以后没有真正创建密码，如果这个时候直接加载启动从节点则会出现如下报错：</p>
+</blockquote>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>08:28:05 9 INFO  Reloading pg_autoctl postgres service [-1]
+08:28:05 10 ERROR Connection to database failed: connection to server at &#34;pg1-service&#34; (172.20.0.30), port 5432 failed: FATAL:  password authentication failed for user &#34;pgautofailover_replicator&#34;
+08:28:05 10 ERROR Failed to connect to &#34;postgres://pgautofailover_replicator@pg1-service:5432/zdb?&#34; after 16 attempts in 1438 ms, pg_autoctl stops retrying now
+08:28:05 10 WARN  Failed to contact the primary node 1 &#34;node_1&#34; (pg1-service:5432)
+08:28:06 10 WARN  Failed to connect to &#34;postgres://pgautofailover_replicator@pg1-service:5432/zdb?&#34;, retrying until the server is ready
+08:28:06 10 ERROR Connection to database failed: connection to server at &#34;pg1-service&#34; (172.20.0.30), port 5432 failed: FATAL:  password authentication failed for user &#34;pgautofailover_replicator&#34;
+</code></pre></td></tr></table>
+</div>
+</div><p>这里需要登录主库创建出密码 命令如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>docker <span class=nb>exec</span> pg1-service psql postgres -c <span class=s2>&#34;alter user pgautofailover_replicator password &#39;h4ckm3m0r3&#39;;&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=第二步创建-创建从节点>第二步创建 创建从节点</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>docker run --net mynet -it -d --name pg2-service <span class=se>\
+</span><span class=se></span>  --ip 172.20.0.40 <span class=se>\
+</span><span class=se></span>  -v /data/pg2:/data <span class=se>\
+</span><span class=se></span>  -e <span class=s2>&#34;PG_AUTOCTL_DEBUG=1&#34;</span> <span class=se>\
+</span><span class=se></span>  -e <span class=s2>&#34;PGPASSWORD=h4ckm3m0r3&#34;</span> <span class=se>\
+</span><span class=se></span>  -e <span class=s2>&#34;PGDATA=/data/pgaf&#34;</span> <span class=se>\
+</span><span class=se></span>  hapg:14 pg_autoctl create postgres --no-ssl --auth scram-sha-256 <span class=se>\
+</span><span class=se></span>  --hostname pg2-service --pg-hba-lan --username zuser --dbname zdb <span class=se>\
+</span><span class=se></span>  --monitor <span class=s2>&#34;postgresql://autoctl_node@pgmonitor-service/pg_auto_failover&#34;</span> --run
+
+docker <span class=nb>exec</span> pg2-service pg_autoctl config <span class=nb>set</span> replication.password h4ckm3m0r3
+<span class=c1># 这里不需要再次创建密码了因为连接成功以后会自动同步过来</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=检查最终状态>检查最终状态</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># docker exec pgmonitor-service pg_autoctl show state</span>
+  Name <span class=p>|</span>  Node <span class=p>|</span>        Host:Port <span class=p>|</span>       TLI: LSN <span class=p>|</span>   Connection <span class=p>|</span>      Reported State <span class=p>|</span>      Assigned State
+-------+-------+------------------+----------------+--------------+---------------------+--------------------
+node_1 <span class=p>|</span>     <span class=m>1</span> <span class=p>|</span> pg1-service:5432 <span class=p>|</span>   1: 0/3337FE8 <span class=p>|</span> read-write ! <span class=p>|</span>             primary <span class=p>|</span>      demote_timeout
+node_2 <span class=p>|</span>     <span class=m>2</span> <span class=p>|</span> pg2-service:5432 <span class=p>|</span>   1: 0/3338078 <span class=p>|</span>    read-only <span class=p>|</span>   prepare_promotion <span class=p>|</span>    stop_replication
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=检查主备功能>检查主备功能</h2>
+<p>这里我们先去另外一个地方导出数据库备份</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>docker <span class=nb>exec</span> dev-pg pg_dump -F c -f /test.dmp -C -E UTF8 -U postgres test_db
+docker cp dev-pg:/test.dmp ./
+</code></pre></td></tr></table>
+</div>
+</div><p>导入到主数据库</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># 数据库导入主节点</span>
+docker cp test.dmp pg1-service:/
+docker <span class=nb>exec</span> dev-pg pg_restore --no-owner --role<span class=o>=</span>zuser -d zdb test.dmp
+</code></pre></td></tr></table>
+</div>
+</div><p>登录从数据库查看,可以看到数据已经有了</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>chinaddos@liuyou-iMac pgtest % docker <span class=nb>exec</span> -it pg2-service psql postgres -d zdb
+docker@21c6c8007d75:/$ psql postgres
+psql <span class=o>(</span>14.4 <span class=o>(</span>Debian 14.4-1.pgdg100+1<span class=o>))</span>
+Type <span class=s2>&#34;help&#34;</span> <span class=k>for</span> help.
+<span class=nv>zdb</span><span class=o>=</span><span class=c1># \dt</span>
+               List of relations
+ Schema <span class=p>|</span>         Name          <span class=p>|</span> Type  <span class=p>|</span> Owner 
+--------+-----------------------+-------+-------
+ public <span class=p>|</span> test111111111         <span class=p>|</span> table <span class=p>|</span> zuser
+ public <span class=p>|</span> test1111111112222     <span class=p>|</span> table <span class=p>|</span> zuser
+<span class=c1># ...</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用命令停止主库 <code>docker stop pg1-service</code></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>  Name |  Node |        Host:Port |       TLI: LSN |   Connection |      Reported State |      Assigned State
+-------+-------+------------------+----------------+--------------+---------------------+--------------------
+node_1 |     1 | pg1-service:5432 |   1: 0/3337FE8 | read-write ! |             primary |      demote_timeout
+node_2 |     2 | pg2-service:5432 |   2: 0/333BD10 |    read-only |    stop_replication |    stop_replication
+
+</code></pre></td></tr></table>
+</div>
+</div><p>直接修改第二个数据库</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=n>zdb</span><span class=o>=#</span><span class=w> </span><span class=k>select</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=k>from</span><span class=w> </span><span class=n>zw_widgets</span><span class=p>;</span><span class=w>
+</span><span class=w> </span><span class=n>widget_id</span><span class=w> </span><span class=o>|</span><span class=w>     </span><span class=n>title</span><span class=w>     </span><span class=o>|</span><span class=w> </span><span class=n>widget_type</span><span class=w> 
+</span><span class=w></span><span class=c1>-----------+---------------+------------
+</span><span class=c1></span><span class=w> </span><span class=mi>143786240</span><span class=w> </span><span class=o>|</span><span class=w> </span><span class=err>策略管理</span><span class=w>  </span><span class=o>|</span><span class=w>         </span><span class=mi>1</span><span class=w>
+</span><span class=w> </span><span class=mi>143786496</span><span class=w> </span><span class=o>|</span><span class=w> </span><span class=err>策略管理</span><span class=mi>2</span><span class=w> </span><span class=o>|</span><span class=w>         </span><span class=mi>1</span><span class=w>
+</span><span class=w></span><span class=p>(</span><span class=mi>2</span><span class=w> </span><span class=k>rows</span><span class=p>)</span><span class=w>
+</span><span class=w></span><span class=c1>-- 其他命令
+</span><span class=c1></span><span class=n>zdb</span><span class=o>=#</span><span class=w> </span><span class=k>update</span><span class=w> </span><span class=n>zw_widgets</span><span class=w> </span><span class=k>set</span><span class=w> </span><span class=n>widget_type</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=mi>2</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=c1>-- 其他命令
+</span></code></pre></td></tr></table>
+</div>
+</div><p>再次启动第一个数据库，可以看到主备已经互换了</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>  Name |  Node |        Host:Port |       TLI: LSN |   Connection |      Reported State |      Assigned State
+-------+-------+------------------+----------------+--------------+---------------------+--------------------
+node_1 |     1 | pg1-service:5432 |   2: 0/5000110 |    read-only |           secondary |           secondary
+node_2 |     2 | pg2-service:5432 |   2: 0/5000110 |   read-write |             primary |             primary
+</code></pre></td></tr></table>
+</div>
+</div><p>检查pg1，数据库数据已经同步过来</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=n>zdb</span><span class=o>=#</span><span class=w> </span><span class=k>select</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=k>from</span><span class=w> </span><span class=n>zw_widgets</span><span class=p>;</span><span class=w>
+</span><span class=w> </span><span class=n>widget_id</span><span class=w> </span><span class=o>|</span><span class=w>     </span><span class=n>title</span><span class=w>     </span><span class=o>|</span><span class=w> </span><span class=n>widget_type</span><span class=w> 
+</span><span class=w></span><span class=c1>-----------+---------------+------------
+</span><span class=c1></span><span class=w> </span><span class=mi>143786240</span><span class=w> </span><span class=o>|</span><span class=w> </span><span class=err>策略管理</span><span class=w>  </span><span class=o>|</span><span class=w>         </span><span class=mi>2</span><span class=w>
+</span><span class=w> </span><span class=mi>143786496</span><span class=w> </span><span class=o>|</span><span class=w> </span><span class=err>策略管理</span><span class=mi>2</span><span class=w> </span><span class=o>|</span><span class=w>         </span><span class=mi>2</span><span class=w>
+</span><span class=w></span><span class=p>(</span><span class=mi>2</span><span class=w> </span><span class=k>rows</span><span class=p>)</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id=补充>补充</h2>
+<ol>
+<li>怎么调整监测时间相关参数</li>
+</ol>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>psql -p [port] -d pg_auto_failover
+# List the health_check variables
+SELECT name, setting FROM pg_settings WHERE name ~ &#39;pgautofailover\.&#39;;
+# Check status of database every 5s, setthe timeout to 2s and set the node unhealthy timeout to 5s
+ALTER SYSTEM SET pgautofailover.health_check_period TO 5000;
+ALTER SYSTEM SET pgautofailover.health_check_timeout TO 2000;
+ALTER SYSTEM SET pgautofailover.node_considered_unhealthy_timeout TO 5000;
+# Reload config:
+select pg_reload_conf();
+
+</code></pre></td></tr></table>
+</div>
+</div><ol start=2>
+<li>pg-hba.conf 配置文件可能会有坑，需要主要自行添加数据库访问权限</li>
+</ol>
+<h2 id=参考资料>参考资料</h2>
+<p><a href="https://pg-auto-failover.readthedocs.io/en/master/security.html?highlight=password#authentication-with-passwords" target=_blank rel="noopener noreffer">https://pg-auto-failover.readthedocs.io/en/master/security.html?highlight=password#authentication-with-passwords</a></p>
+<p><a href=https://cloud.tencent.com/developer/article/1663944 target=_blank rel="noopener noreffer">https://cloud.tencent.com/developer/article/1663944</a></p>
+<p><a href=https://github.com/citusdata/pg_auto_failover/blob/master/docker-compose.yml target=_blank rel="noopener noreffer">https://github.com/citusdata/pg_auto_failover/blob/master/docker-compose.yml</a></p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-08-05</span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2022/08/20220805-hapg/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=/2022/08/20220805-hapg/ data-hashtag=docker><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=/2022/08/20220805-hapg/ data-title="Postgres 高可用部署验证" data-ralateuid=liuyout><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 百度" data-sharer=baidu data-url=/2022/08/20220805-hapg/ data-title="Postgres 高可用部署验证"><i data-svg-src=/lib/simple-icons/icons/baidu.min.svg></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=/2022/08/20220805-hapg/ data-title="Postgres 高可用部署验证"><i class="fab fa-evernote fa-fw"></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/docker/>docker</a>,&nbsp;<a href=/tags/postgres/>postgres</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2022/07/20220727-soulseek/ class=prev rel=prev title="Soulseek Docker的中文支持"><i class="fas fa-angle-left fa-fw"></i>Soulseek Docker的中文支持</a></div>
+</div>
+</article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2020 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>优仔</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+<span class=icp><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>湘ICP备2021001840号-1</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div><link rel=stylesheet href=/lib/katex/katex.min.css><link rel=stylesheet href=/lib/katex/copy-tex.min.css><link rel=stylesheet href=/lib/cookieconsent/cookieconsent.min.css><script type=text/javascript src=/lib/smooth-scroll/smooth-scroll.min.js></script><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/auto-render.min.js></script><script type=text/javascript src=/lib/katex/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/mhchem.min.js></script><script type=text/javascript src=/lib/cookieconsent/cookieconsent.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{},cookieconsent:{content:{dismiss:"同意",link:"了解更多",message:"本网站使用 Cookies 来改善您的浏览体验."},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','UA-55758758-1')</script><script type=text/javascript src="https://www.googletagmanager.com/gtag/js?id=UA-55758758-1" async></script></body>
+</html>
