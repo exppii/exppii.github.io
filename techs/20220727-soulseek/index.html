@@ -1,0 +1,165 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Soulseek Docker的中文支持 - 晨熙小屋</title><meta name=Description content="晨熙的魔法小屋"><meta property="og:title" content="Soulseek Docker的中文支持"><meta property="og:description" content="引 一直想找个快乐的下载电影原声配乐、和其他音乐的方式。PT网站是一种选择，但是还需要自行的去下载种子，落雪也是很好的选择，但是没法下载无损音"><meta property="og:type" content="article"><meta property="og:url" content="/techs/20220727-soulseek/"><meta property="og:image" content="/images/logo.svg"><meta property="article:section" content="techs"><meta property="article:published_time" content="2022-07-27T15:35:20+00:00"><meta property="article:modified_time" content="2022-07-27T15:35:20+00:00"><meta property="og:site_name" content="My cool site"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="/images/logo.svg"><meta name=twitter:title content="Soulseek Docker的中文支持"><meta name=twitter:description content="引 一直想找个快乐的下载电影原声配乐、和其他音乐的方式。PT网站是一种选择，但是还需要自行的去下载种子，落雪也是很好的选择，但是没法下载无损音"><meta name=application-name content="LoveIt"><meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel=icon href=/images/logo.svg><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=/techs/20220727-soulseek/><link rel=prev href=/techs/k8s_https_with_cert_manager/><link rel=next href=/techs/20220805-hapg/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=/lib/fontawesome-free/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload href=/lib/animate/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Soulseek Docker的中文支持","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"\/techs\/20220727-soulseek\/"},"genre":"techs","keywords":"docker, ubuntu","wordcount":1082,"url":"\/techs\/20220727-soulseek\/","datePublished":"2022-07-27T15:35:20+00:00","dateModified":"2022-07-27T15:35:20+00:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"优仔"},"description":""}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=晨熙小屋><img class="lazyload logo" src=/svg/loading.min.svg data-src=/images/logo.svg data-srcset="/images/logo.svg, /images/logo.svg 1.5x, /images/logo.svg 2x" data-sizes=auto alt=/images/logo.svg title=/images/logo.svg></a></div><div class=menu><div class=menu-inner><a class=menu-item href=/techs/>枯燥 </a><a class=menu-item href=/posts/>随笔 </a><a class=menu-item href=/diabetes/>糖系列 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/about>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=晨熙小屋><img class="lazyload logo" src=/svg/loading.min.svg data-src=/images/logo.svg data-srcset="/images/logo.svg, /images/logo.svg 1.5x, /images/logo.svg 2x" data-sizes=auto alt=/images/logo.svg title=/images/logo.svg></a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw" aria-hidden=true></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/techs/ title>枯燥</a><a class=menu-item href=/posts/ title>随笔</a><a class=menu-item href=/diabetes/ title>糖系列</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/about title>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">Soulseek Docker的中文支持</h1><div class=content id=content><h2 id=引>引</h2><p>一直想找个快乐的下载电影原声配乐、和其他音乐的方式。PT网站是一种选择，但是还需要自行的去下载种子，落雪也是很好的选择，但是没法下载无损音质。其他的就更麻烦。搜来搜去SoulSeek是一个很棒的选择。</p><h2 id=docker-版本>docker 版本</h2><p>SoulSeekQT是提供mac，windows，linux三个平台的版本。但是为了能24小时下（分）载（享）数据。同时要将下载的数据快速的存储在nas服务器上，docker版本是一个很好的选择 github上也确实找到了一个不错的版本（https://github.com/realies/soulseek-docker）。大概命令如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>docker run -d --name soulseek --restart<span class=o>=</span>unless-stopped <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>-v <span class=s2>&#34;/persistent/appdata&#34;</span>:<span class=s2>&#34;/data/.SoulseekQt&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>-v <span class=s2>&#34;/persistent/downloads&#34;</span>:<span class=s2>&#34;/data/Soulseek Downloads&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>-v <span class=s2>&#34;/persistent/logs&#34;</span>:<span class=s2>&#34;/data/Soulseek Chat Logs&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>-v <span class=s2>&#34;/persistent/shared&#34;</span>:<span class=s2>&#34;/data/Soulseek Shared Folder&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>-e <span class=nv>PGID</span><span class=o>=</span><span class=m>1000</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>-e <span class=nv>PUID</span><span class=o>=</span><span class=m>1000</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>-p 6080:6080 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>realies/soulseek
+</span></span></code></pre></td></tr></table></div></div><p>不过有个致命的问题，<strong>不支持中文</strong>。这是一个让人恼火的问题。</p><h2 id=解决中文问题>解决中文问题</h2><p>简单看了一下为什么不支持，是因为原来镜像包使用的是标准的ubuntu。毕竟不是国人打包的软件。
+可以尝试按照如下方式重新打包：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Dockerfile data-lang=Dockerfile><span class=line><span class=cl><span class=c># 添加中文输入法，并设置中文</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=s> realies/soulseek</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>RUN</span> <span class=nb>set</span> -eux <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    apt-get update <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    apt-get install -y xfonts-wqy <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    locale-gen zh_CN.UTF-8 <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    update-locale <span class=nv>LANG</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LANGUAGE</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LC_ALL</span><span class=o>=</span>zh_CN.UTF-8 <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    find /var/lib/apt/lists -type f -delete <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    find /var/cache -type f -delete<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ENV</span> <span class=nv>LANG</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LANGUAGE</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LC_ALL</span><span class=o>=</span>zh_CN.UTF-8<span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><p>重新启动，饿居然报错了，怎么回事。不慌，看看日志：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>root@home:/home/liuyou/soulseek-docker# docker logs soulseek
+</span></span><span class=line><span class=cl>2022-07-27 05:23:47,737 INFO Set uid to user <span class=m>1000</span> succeeded
+</span></span><span class=line><span class=cl>2022-07-27 05:23:47,740 INFO supervisord started with pid <span class=m>21</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:48,743 INFO spawned: <span class=s1>&#39;tigervnc&#39;</span> with pid <span class=m>22</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:48,745 INFO spawned: <span class=s1>&#39;openbox&#39;</span> with pid <span class=m>23</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:48,747 INFO spawned: <span class=s1>&#39;novnc&#39;</span> with pid <span class=m>24</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:48,749 INFO spawned: <span class=s1>&#39;soulseek&#39;</span> with pid <span class=m>25</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:49,770 INFO success: tigervnc entered RUNNING state, process has stayed up <span class=k>for</span> &gt; than <span class=m>1</span> seconds <span class=o>(</span>startsecs<span class=o>)</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:49,770 INFO success: openbox entered RUNNING state, process has stayed up <span class=k>for</span> &gt; than <span class=m>1</span> seconds <span class=o>(</span>startsecs<span class=o>)</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:49,770 INFO success: novnc entered RUNNING state, process has stayed up <span class=k>for</span> &gt; than <span class=m>1</span> seconds <span class=o>(</span>startsecs<span class=o>)</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:49,770 INFO success: soulseek entered RUNNING state, process has stayed up <span class=k>for</span> &gt; than <span class=m>1</span> seconds <span class=o>(</span>startsecs<span class=o>)</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:49,770 INFO exited: soulseek <span class=o>(</span><span class=nb>exit</span> status 127<span class=p>;</span> not expected<span class=o>)</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:49,774 INFO spawned: <span class=s1>&#39;soulseek&#39;</span> with pid <span class=m>59</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:50,833 INFO success: soulseek entered RUNNING state, process has stayed up <span class=k>for</span> &gt; than <span class=m>1</span> seconds <span class=o>(</span>startsecs<span class=o>)</span>
+</span></span><span class=line><span class=cl>2022-07-27 05:23:50,833 INFO exited: soulseek <span class=o>(</span><span class=nb>exit</span> status 127<span class=p>;</span> not expected<span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>不可能呀就是添加一个语音包而已。看不出什么呀，继续查看启动命令
+cat init.sh</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[program:soulseek]
+</span></span><span class=line><span class=cl>user=$username
+</span></span><span class=line><span class=cl>environment=HOME=&#34;/data&#34;,DISPLAY=&#34;:1&#34;,USER=&#34;$username&#34;
+</span></span><span class=line><span class=cl>command=/app/SoulseekQt
+</span></span><span class=line><span class=cl>autorestart=true
+</span></span></code></pre></td></tr></table></div></div><p>依葫芦画瓢我们收到启动试试：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>echo</span> <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>su soulseek
+</span></span></span><span class=line><span class=cl><span class=s2>export HOME=/data
+</span></span></span><span class=line><span class=cl><span class=s2>export DISPLAY=&#34;</span>:1<span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>export USER=soulseek
+</span></span></span><span class=line><span class=cl><span class=s2>/app/SoulseekQt --help
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;</span> &gt; t.sh
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>root@81c5257a7174:/app# bash t.sh 
+</span></span><span class=line><span class=cl>QStandardPaths: wrong ownership on runtime directory /data, <span class=m>1000</span> instead of <span class=m>0</span>
+</span></span><span class=line><span class=cl>/app/SoulseekQt: symbol lookup error: /lib/x86_64-linux-gnu/libfontconfig.so.1: undefined symbol: FT_Done_MM_Var
+</span></span></code></pre></td></tr></table></div></div><p>露出原型了吧，赶紧谷歌一把，得到两个相关的链接：
+<a href=https://blog.51cto.com/u_15127633/3855600 target=_blank rel="noopener noreffer">https://blog.51cto.com/u_15127633/3855600</a>
+<a href=https://askubuntu.com/questions/1140921/wolfram-mathematica-after-upgrade-to-ubuntu-19-04-symbol-lookup-error-usr-lib target=_blank rel="noopener noreffer">https://askubuntu.com/questions/1140921/wolfram-mathematica-after-upgrade-to-ubuntu-19-04-symbol-lookup-error-usr-lib</a>
+使用系统的libfreetype.so.6代替游戏目录中的libfreetype.so.6</p><p>饿貌似<code>libfreetype</code> 和报错的 <code>libfontconfig</code>没有直接关系吧。不管了，再次修改Dockerfile文件。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-Dockerfile data-lang=Dockerfile><span class=line><span class=cl><span class=c># 添加中文输入法，并设置中文</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=s> realies/soulseek</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>RUN</span> <span class=nb>set</span> -eux <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    apt-get update <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    apt-get install -y xfonts-wqy <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    locale-gen zh_CN.UTF-8 <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    update-locale <span class=nv>LANG</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LANGUAGE</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LC_ALL</span><span class=o>=</span>zh_CN.UTF-8 <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    mv /app/lib/libfreetype.so.6 /app/lib/libfreetype.so.6.bak <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    find /var/lib/apt/lists -type f -delete <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    find /var/cache -type f -delete<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ENV</span> <span class=nv>LANG</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LANGUAGE</span><span class=o>=</span>zh_CN.UTF-8 <span class=nv>LC_ALL</span><span class=o>=</span>zh_CN.UTF-8<span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><p>最后运行启动命令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>docker run -it -d --restart=unless-stopped \
+</span></span><span class=line><span class=cl> --name soulseek \
+</span></span><span class=line><span class=cl> --net home6 \
+</span></span><span class=line><span class=cl>-e PGID=1000 \
+</span></span><span class=line><span class=cl>-e PUID=1000 \
+</span></span><span class=line><span class=cl>-e XMODIFIERS=&#34;@im=fcitx&#34; \
+</span></span><span class=line><span class=cl>-e QT_IM_MODULE=&#34;fcitx&#34;  \
+</span></span><span class=line><span class=cl>-e GTK_IM_MODULE=&#34;fcitx&#34; \
+</span></span><span class=line><span class=cl>-p 6080:6080 \
+</span></span><span class=line><span class=cl> -v /data/music:/data/music \
+</span></span><span class=line><span class=cl>soulseek:0.0.4
+</span></span></code></pre></td></tr></table></div></div><p>好了 这下舒服了</p><p><img class=lazyload src=/svg/loading.min.svg data-src=/images/soulseek_final_worked.png data-srcset="/images/soulseek_final_worked.png, /images/soulseek_final_worked.png 1.5x, /images/soulseek_final_worked.png 2x" data-sizes=auto alt=/images/soulseek_final_worked.png title=/images/soulseek_final_worked.png></p><h2 id=其他参考链接>其他参考链接</h2><p><a href=http://www.soulseekqt.net/news/node/1 target=_blank rel="noopener noreffer">http://www.soulseekqt.net/news/node/1</a>
+<a href=https://containerization-automation.readthedocs.io/zh_CN/latest/docker/basic/[Docker][Ubuntu%2018.04]%E4%B8%AD%E6%96%87%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/ target=_blank rel="noopener noreffer">https://containerization-automation.readthedocs.io/zh_CN/latest/docker/basic/[Docker][Ubuntu%2018.04]%E4%B8%AD%E6%96%87%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</a></p></div></div></div></main><footer class=footer><div class=footer-container><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2020 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>优仔</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br><span class=icp><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>湘ICP备2021001840号-1</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=/lib/katex/katex.min.css><link rel=stylesheet href=/lib/cookieconsent/cookieconsent.min.css><script type=text/javascript src=/lib/autocomplete/autocomplete.min.js></script><script type=text/javascript src=/lib/lunr/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=/lib/lazysizes/lazysizes.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/sharer/sharer.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js></script><script type=text/javascript src=/lib/katex/contrib/auto-render.min.js></script><script type=text/javascript src=/lib/katex/contrib/copy-tex.min.js></script><script type=text/javascript src=/lib/katex/contrib/mhchem.min.js></script><script type=text/javascript src=/lib/cookieconsent/cookieconsent.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{},cookieconsent:{content:{dismiss:"同意",link:"了解更多",message:"本网站使用 Cookies 来改善您的浏览体验."},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","UA-55758758-1")</script><script type=text/javascript src="https://www.googletagmanager.com/gtag/js?id=UA-55758758-1" async></script></body></html>
